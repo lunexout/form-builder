@@ -1,26 +1,67 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {
+  Box,
+  Container,
+  createTheme,
+  CssBaseline,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  MuiThemeProvider,
+  Paper,
+} from '@material-ui/core'
+import { FormBuilder } from 'lib/form-builder'
+import { useState } from 'react'
+import { studentProfileSchema } from 'schemas/student-profile'
+import ReactJson from 'react-json-view'
 
-function App() {
+const theme = createTheme({
+  props: {
+    MuiTextField: {
+      variant: 'outlined',
+      margin: 'dense',
+    },
+    MuiFormControl: {
+      variant: 'outlined',
+      margin: 'dense',
+    },
+  },
+})
+
+export const App = () => {
+  const [submittedData, setSubmittedData] = useState<any>(null)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <MuiThemeProvider theme={theme}>
+      <CssBaseline />
+      <Container maxWidth="sm">
+        <Box p={2}>
+          <Paper>
+            <FormBuilder
+              schema={studentProfileSchema}
+              onSubmit={values => {
+                setSubmittedData(values)
+              }}
+            />
+          </Paper>
+        </Box>
+      </Container>
+      <Dialog
+        open={submittedData !== null}
+        maxWidth="sm"
+        fullWidth
+        onClose={() => setSubmittedData(null)}
+      >
+        <DialogTitle>Submitted form</DialogTitle>
+        <DialogContent>
+          <ReactJson
+            src={submittedData}
+            displayDataTypes={false}
+            displayObjectSize={false}
+            enableClipboard={false}
+            name={null}
+          />
+        </DialogContent>
+      </Dialog>
+    </MuiThemeProvider>
+  )
 }
-
-export default App;
