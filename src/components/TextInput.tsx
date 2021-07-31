@@ -12,7 +12,6 @@ interface Props {
 export const TextInput = ({ label, type, handleChange, value,identor,properties }: Props) => {
   return (
     <>
-    {console.log(properties.pattern)}
       <TextField
         id="outlined-basic"
         label={`${label}`}
