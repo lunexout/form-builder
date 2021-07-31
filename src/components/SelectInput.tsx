@@ -1,7 +1,3 @@
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
-import OutlinedInput from "@material-ui/core/OutlinedInput";
 import { makeStyles } from '@material-ui/core/styles';
 
 
@@ -25,7 +21,6 @@ interface Props {
 
 export const SelectInput = ({
   label,
-  type,
   handleChange,
   value,
   identor,
@@ -38,8 +33,7 @@ export const SelectInput = ({
         {options.map((item,i) => {
           return (
             <>
-              {/* {i == 0 && (handleChange({val:item.value, name: identor}))} */}
-              <option value={item.value}>{item.label}</option>
+              <option key={item.value+i} value={item.value}>{item.label}</option>
             </>
           );
         })}
@@ -48,7 +42,6 @@ export const SelectInput = ({
   };
   return (
     <>
-      {/* <InputLabel htmlFor="outlined-age-native-simple">{label}</InputLabel> */}
       <select
         className={classes.select}
         value={value}
@@ -61,7 +54,7 @@ export const SelectInput = ({
           handleChange(event)
         }}
       >
-      <option>{label}</option>
+        <option>{label}</option>
         <RenderMenuItems />
       </select>
     </>

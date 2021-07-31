@@ -83,6 +83,7 @@ export const FormBuilder = ({ schema, onSubmit }: Props) => {
                     type={el.type}
                     identor={el.name}
                     properties={GenerateProperties(el)}
+                    required={el.required ? el.required : false}
                   />
                 </>
               ) : (
@@ -103,7 +104,7 @@ export const FormBuilder = ({ schema, onSubmit }: Props) => {
                   <>
                     {el.type === 'array' ?(
                       <>
-                      <Paper style={{height:300,marginTop:7,padding:20}}>
+                      <Paper style={{marginTop:7,padding:20}}>
                       <Typography variant="h5" gutterBottom>{el.label}</Typography>
                       <Paper style={{height:200, display: 'flex', flexDirection: 'column',padding:20}}>
                         {el.item.properties.map(el1 => {
@@ -117,11 +118,12 @@ export const FormBuilder = ({ schema, onSubmit }: Props) => {
                               type={el1.type}
                               identor={el.name}
                               properties={GenerateProperties(el1)}
+                              required={el.required ? el.required : false}
                             />
                             </>
                           )
                         })}
-                        <Button style={{width: 100,marginTop: 10}} variant="outlined">Add</Button>
+                        <Button style={{width: 100,marginTop: 10}}  variant="outlined">Add</Button>
                       </Paper>
                       </Paper>
                       </>
@@ -142,6 +144,7 @@ export const FormBuilder = ({ schema, onSubmit }: Props) => {
                                     type={el1.type}
                                     identor={el1.name}
                                     properties={GenerateProperties(el1)}
+                                    required={false}
                                   />
                                 </>
                               )
@@ -178,6 +181,7 @@ export const FormBuilder = ({ schema, onSubmit }: Props) => {
           </Typography>
           <RenderTextFields />
           {/* Code here */}
+          <button onClick={() => onSubmit(elements)}></button>
         </Box>
       </Paper>
     </>
