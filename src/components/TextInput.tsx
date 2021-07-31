@@ -3,25 +3,31 @@ import TextField from '@material-ui/core/TextField'
 interface Props {
   label: string
   type: string
-  handleChange(arg: string): void
+  handleChange(event: any): void
   value: any
+  identor: string
+  properties:any
 }
 
-export const TextInput = ({ label, type, handleChange, value }: Props) => {
-  // const { handleChange } = useContext(FormContext)
-
+export const TextInput = ({ label, type, handleChange, value,identor,properties }: Props) => {
   return (
     <>
+    {console.log(properties.pattern)}
       <TextField
         id="outlined-basic"
         label={`${label}`}
         variant="outlined"
-        type={type}
+        type={identor === 'phone' ? properties.inputType : type}
+        inputProps={{ pattern: properties.pattern && properties.pattern }}
         value={value}
+        required
         onChange={e => {
           value = e.target.value
-          console.log(value)
-          handleChange(value)
+          const event = {
+            val: value,
+            name: identor
+          }
+          handleChange(event)
         }}
       />
     </>
