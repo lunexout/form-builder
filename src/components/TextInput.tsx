@@ -3,14 +3,14 @@ import TextField from '@material-ui/core/TextField'
 interface Props {
   label: string
   type: string
-  handleChange(event: any): void
   value: any
   identor: string
   properties:any
   required: boolean
+  handleChange(event: any): void
 }
 
-export const TextInput = ({ label, type, handleChange, value,identor,properties,required }: Props) => {
+export const TextInput = ({ label, type, value,identor,properties,required,handleChange }: Props) => {
   return (
     <>
     {required ? (
@@ -28,14 +28,11 @@ export const TextInput = ({ label, type, handleChange, value,identor,properties,
       required
       onChange={e => {
         value = e.target.value
-        const event = {
-          val: value,
-          name: identor
-        }
+        const event = { val: value, name: identor,label:label }
         handleChange(event)
       }}
     />
-    ): (
+    ):(
       <TextField
         id="outlined-basic"
         label={`${label}`}
@@ -49,10 +46,7 @@ export const TextInput = ({ label, type, handleChange, value,identor,properties,
         value={value}
         onChange={e => {
           value = e.target.value
-          const event = {
-            val: value,
-            name: identor
-          }
+          const event = { val: value, name: identor, label:label }
           handleChange(event)
         }}
       />
