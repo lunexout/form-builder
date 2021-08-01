@@ -1,6 +1,4 @@
-import { ObjectSchema } from 'lib/form-builder'
-
-export const studentProfileSchema: ObjectSchema = {
+var a = {
   "type": "object",
   "name": "test",
   "label": "Test",

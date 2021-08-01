@@ -15,25 +15,11 @@ interface DataSchema {
   name: string
   value: any
 }
-interface TechSchema {
-  value:any
-  exp: number
-}
-interface ProjectSchema {
-  name: string
-  link: string
-}
+
 export const FormBuilder = ({ schema, onSubmit }: Props) => {
   const [elements, setElements] = useState<Array<DataSchema>>([])
-  const [techs,setTechs] = useState<Array<TechSchema>>([])
-  const [projects,setProjects] = useState<Array<ProjectSchema>>([])
 
   let value: any
-  let technology = '';
-  let experience = 0;
-
-  let projectname = '';
-  let projectlink = '';
 
   useEffect(() => {
     schema.properties.forEach(el => {
@@ -48,56 +34,21 @@ export const FormBuilder = ({ schema, onSubmit }: Props) => {
   }, [])
 
   const handleChange = (event: any): void => {
-    console.log(event.name, event.label)
-    if(event.name === 'technologies') {
-      event.label == 'Technology' ? technology = event.val : experience = event.val
-    }else if(event.name === 'projects'){
-      event.label == 'Name' ? projectname = event.val : projectlink = event.val;
-    }else{
       elements.forEach(el => {
         if(el.name == event.name){el.value = event.val}
       })
-    }
   }
-  const AddElement = (element: string): void => {
-    if(element == 'technologies') {
-      if(technology == '') {
-          ShowAlert({error: true, text: 'Please fill the technology input', header: 'Tech input error'})
-      }else {
-        if(experience > 6 || experience <= 0) {
-          ShowAlert({error: true, text: 'Please fill or write correct experience', header: 'Experience input error'})
-        }else {
-          setTechs(old => [...old, {value: technology, exp: experience }])
-        }
-      }
-    }else{
-      if(projectname == '') {
-        ShowAlert({error: true, text: 'Please fill the project name input', header: 'Project name input'})
-      }else if(projectlink == '') {
-        ShowAlert({error: true, text: 'Please fill the project link input', header: 'Project link input'})
-      }else {
-        setProjects(old => [...old, {name: projectname, link: projectlink }])
-      }
-    }
-  }
+
+          // ShowAlert({error: true, text: 'Please fill the technology input', header: 'Tech input error'})
+
   const GenerateProperties = (el:any):object => {
-    switch(el.name){
-      case 'phone': {
         return {
-          type: el.inputType,
-          min: el.minLength,
-          max: el.maxLength,
-          pattern: el.pattern
+          type: el.inputType && el.inputType,
+          min: el.minLength && el.minLength,
+          max: el.maxLength && el.maxLength,
+          pattern: el.pattern && el.pattern,
+          multiline: el.multiline && el.multiline,
         }
-      }
-      case 'universityYears': {
-        return {
-          min: el.minimum,
-          max: el.maximum,
-        }
-      }
-      default: return {}
-    }
   }
   const RenderTextFields = () => {
     return (
@@ -112,8 +63,8 @@ export const FormBuilder = ({ schema, onSubmit }: Props) => {
                     label={el.label!}
                     value={value}
                     handleChange={handleChange}
-                    type={el.type}
-                    identor={el.name}
+                    type={el.type === 'string' ? 'text' : 'number'}
+                    name={el.name}
                     properties={GenerateProperties(el)}
                     required={el.required ? el.required : false}
                   />
@@ -128,7 +79,7 @@ export const FormBuilder = ({ schema, onSubmit }: Props) => {
                     value={value}
                     handleChange={handleChange}
                     type={el.type}
-                    identor={el.name}
+                    name={el.name}
                     options={el.options}
                   />
                   </>
@@ -148,58 +99,14 @@ export const FormBuilder = ({ schema, onSubmit }: Props) => {
                               value={value}
                               handleChange={handleChange}
                               type={el1.type}
-                              identor={el.name}
+                              name={el.name}
                               properties={GenerateProperties(el1)}
                               required={el.required ? el.required : false}
                             />
                             </>
                           )
                         })}
-                        <Button style={{width: 100,marginTop: 10}} onClick={() => AddElement(el.name)}  variant="outlined">Add</Button>
-
-                      </Paper>
-                      <Paper>
-                        {el.name === 'projects' ? (
-                          <>
-                          {projects.reverse().map(el => {
-                          return(
-                            <>
-                              <div style={{padding: 20, display: 'flex'}}>
-                                <div>
-                                <Typography variant="h5" gutterBottom>Project Name: &nbsp;{el.name}</Typography>
-                                <Typography variant="h5" gutterBottom>Project Link: &nbsp;{el.link}</Typography>
-                                </div>
-                                <div>
-                                  <Button style={{width: 100,marginTop: 10}} onClick={() => {
-                                    setProjects(projects.filter(el1 => el1 != el))
-                                  }}  variant="outlined">Remove</Button>
-                                </div>
-                              </div>
-                            </>
-                          )
-                          })}
-                          </>
-                        ) : (
-                          <>
-                          {techs.reverse().map(el => {
-                            return(
-                              <>
-                                <div style={{padding: 20, display: 'flex'}}>
-                                  <div>
-                                  <Typography variant="h5" gutterBottom>Technology: &nbsp;{el.value}</Typography>
-                                  <Typography variant="h5" gutterBottom>Experience(Years): &nbsp;{el.exp}</Typography>
-                                  </div>
-                                  <div>
-                                    <Button style={{width: 100,marginTop: 10}} onClick={() => {
-                                      setTechs(techs.filter(el1 => el1 != el))
-                                    }}  variant="outlined">Remove</Button>
-                                  </div>
-                                </div>
-                              </>
-                            )
-                          })}
-                          </>
-                        )}
+                        <Button style={{width: 100,marginTop: 10}}  variant="outlined">Add</Button>
                       </Paper>
                       </Paper>
                       </>
@@ -218,7 +125,7 @@ export const FormBuilder = ({ schema, onSubmit }: Props) => {
                                     value={value}
                                     handleChange={handleChange}
                                     type={el1.type}
-                                    identor={el1.name}
+                                    name={el1.name}
                                     properties={GenerateProperties(el1)}
                                     required={false}
                                   />

@@ -13,15 +13,14 @@ interface Props {
   label: string;
   type: string;
   value: any;
-  identor: string;
+  name: string;
   options: Array<any>;
   handleChange(event: any): void;
 }
-
 export const SelectInput = ({
   label,
   value,
-  identor,
+  name,
   options,
   handleChange,
 }: Props) => {
@@ -46,7 +45,7 @@ export const SelectInput = ({
         value={value}
         onChange={(e) => {
           value = e.target.value
-          const event = { val: value, name: identor }
+          const event = { val: value, name: name }
           handleChange(event)
         }}
       >
