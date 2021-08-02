@@ -42,10 +42,11 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
   let value: any
 
   const SetNestedElementValue = (el:any, label: string, value:string) => {
-    el.properties.forEach((el:any) => {
-      if(el.type === OBJECT) el.properties && SetNestedElementValue(el,label,value)
-      else if(el.label === label) el.value = value
-    })
+      el.properties.forEach((el:any, index: number) => {
+        if(el.type === OBJECT) el.properties && SetNestedElementValue(el,label,value)
+        else if(el.label === label) el.value = value
+        else RenderContent(el,index)
+      })
   }
   const SetValue = (event: any): void => {
       readyData.properties.forEach((el:any) => {
@@ -59,7 +60,6 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
           }
           case ARRAY: {
             el.item.map((ele:any) => {
-              console.log(ele.label, event.label)
               if(ele.label === event.label) ele.value = event.val
               else if(ele.type === OBJECT) SetNestedElementValue(ele, event.label, event.val)
             })
@@ -138,15 +138,9 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
       return(
         <FormControlLabel
         control={
-          <Checkbox
-            checked={value}
-            onChange={(e) => { value=e.target.value, SetValue({ val: value, name: el.name}) }}
-            name={el.name}
-            color='primary'
-          />
-        }
+        <Checkbox checked={value} onChange={(e) => { value=e.target.value, SetValue({ val: value, name: el.name}) }} name={el.name} color='primary' /> }
         label={el.label}
-      />
+        />
       )
     }
   }
