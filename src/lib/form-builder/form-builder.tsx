@@ -3,11 +3,12 @@ import { ObjectSchema } from './types'
 
 import { TextInput } from './../../components/TextInput'
 import {SelectInput} from './../../components/SelectInput'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import {ShowAlert} from './../../components/Alert'
 
 type Props = {
+  jsonData: string
   schema: ObjectSchema
   onSubmit: (values: any) => void
 }
@@ -15,82 +16,105 @@ interface DataSchema {
   name: string
   value: any
 }
-
-export const FormBuilder = ({ schema, onSubmit }: Props) => {
+const GenerateProperties = (el:any):object => {
+  return {
+    type: el.inputType && el.inputType,
+    min: el.minLength && el.minLength,
+    max: el.maxLength && el.maxLength,
+    pattern: el.pattern && el.pattern,
+    multiline: el.multiline && el.multiline,
+  }
+}
+export const FormBuilder = ({ jsonData, schema, onSubmit }: Props) => {
   const [elements, setElements] = useState<Array<DataSchema>>([])
+  const STRING = 'string'
+  const NUMBER = 'number'
+  const ENUM = 'ENUM'
+  const ARRAY = 'array'
+  const OBJECT = 'object'
 
+  let readyData = JSON.parse(jsonData) //
   let value: any
 
-  useEffect(() => {
-    schema.properties.forEach(el => {
-      if(el.type === 'object') {
-        el.properties.forEach(el=>{
-          setElements(oldArray => [...oldArray, {name: el.name, value: null}])
-        })
-      }else{
-        setElements(oldArray => [...oldArray, {name: el.name, value: null}])
-      }
+  const findElement = (el:any, label: string, value:string) => {
+    el.properties.forEach((el:any) => {
+      if(el.type === OBJECT) el.properties && findElement(el,label,value)
+      else if(el.label === label) el.value = value
     })
-  }, [])
-
+  }
   const handleChange = (event: any): void => {
-      elements.forEach(el => {
-        if(el.name == event.name){el.value = event.val}
-      })
-  }
-
-          // ShowAlert({error: true, text: 'Please fill the technology input', header: 'Tech input error'})
-
-  const GenerateProperties = (el:any):object => {
-        return {
-          type: el.inputType && el.inputType,
-          min: el.minLength && el.minLength,
-          max: el.maxLength && el.maxLength,
-          pattern: el.pattern && el.pattern,
-          multiline: el.multiline && el.multiline,
+      readyData.properties.forEach((el:any) => {
+        switch(el.type){
+          case OBJECT: {
+            el.properties.map((ele:any) => {
+              if(ele.label === event.label) ele.value = event.val
+              else if(ele.type == OBJECT) findElement(ele, event.label, event.val)
+            })
+            break;
+          }
+          default: { el.name == event.name && (el.value = event.val) }
         }
+      })
+      console.log(readyData)
   }
-  const RenderTextFields = () => {
-    return (
+
+  // ShowAlert({error: true, text: 'Please fill the technology input', header: 'Tech input error'})
+
+  const RenderNestedObjects = (ele:any) => {
+    return(
       <>
-        {schema.properties.map((el, index) => {
-          return (
+      {ele.type === OBJECT && (
+        <Paper style={{marginTop:7,padding:20,display: 'flex', flexDirection: 'column',}}>
+        <Typography variant="h5" gutterBottom>{ele.label}</Typography>
+          {ele.properties.map((el1:any, index:number) => {
+            return(
+              <>
+              {el1.type !== OBJECT && (
+                <TextInput props={el1} key={el1.name + index} value={value} handleChange={handleChange}
+                properties={GenerateProperties(el1)} required={el1.required ? true : false} /> )}
+              {RenderNestedObjects(el1)}
+              </>
+              )
+            })
+          }
+        </Paper>
+      )
+      }
+      </>
+    )
+  }
+
+  const RenderContent = (el: any, index: number) => {
+    if(el.type === STRING || el.type === NUMBER){
+      return(
+        <TextInput props={el} key={el.name + index} value={value} handleChange={handleChange}
+          properties={GenerateProperties(el)} required={el.required ? true : false} />
+      )
+    }else if(el.type === ENUM){
+      return(
+        <SelectInput key={el.name + index} label={el.label!} value={value} handleChange={handleChange} type={el.type}
+          name={el.name} options={el.options} />
+      )
+    }else if(el.type === OBJECT){
+      return(
+        <Paper style={{marginTop:7,padding:20,display: 'flex', flexDirection: 'column',}}>
+        <Typography variant="h5" gutterBottom>{el.label}</Typography>
+        {el.properties.map((ele:any) => {
+          return(
             <>
-              {el.type === 'string' || el.type === 'number' ? (
-                <>
-                  <TextInput
-                    key={el.name + index}
-                    label={el.label!}
-                    value={value}
-                    handleChange={handleChange}
-                    type={el.type === 'string' ? 'text' : 'number'}
-                    name={el.name}
-                    properties={GenerateProperties(el)}
-                    required={el.required ? el.required : false}
-                  />
-                </>
-              ) : (
-                <>
-                {el.type === 'enum' ? (
-                  <>
-                  <SelectInput
-                    key={el.name + index}
-                    label={el.label!}
-                    value={value}
-                    handleChange={handleChange}
-                    type={el.type}
-                    name={el.name}
-                    options={el.options}
-                  />
-                  </>
-                ): (
-                  <>
-                    {el.type === 'array' ?(
-                      <>
-                      <Paper style={{marginTop:7,padding:20}}>
-                      <Typography variant="h5" gutterBottom>{el.label}</Typography>
-                      <Paper style={{height:200, display: 'flex', flexDirection: 'column',padding:20}}>
-                        {el.item.properties.map(el1 => {
+            {ele.type === OBJECT ? RenderNestedObjects(ele) : (
+            <TextInput props={ele} key={ele.name} value={value} handleChange={handleChange} properties= {GenerateProperties(ele)} required={ele.required ? true : false}  /> )}
+            </>
+          )
+        })}
+        </Paper>
+      )
+    }else if(el.type === ARRAY){
+      return(
+        <Paper style={{marginTop:7,padding:20}}>
+        <Typography variant="h5" gutterBottom>{el.label}</Typography>
+        <Paper style={{height:200, display: 'flex', flexDirection: 'column',padding:20}}>
+                        {/* {el.item.properties.map((el1:any) => {
                           return(
                             <>
                             <TextInput
@@ -105,43 +129,20 @@ export const FormBuilder = ({ schema, onSubmit }: Props) => {
                             />
                             </>
                           )
-                        })}
-                        <Button style={{width: 100,marginTop: 10}}  variant="outlined">Add</Button>
-                      </Paper>
-                      </Paper>
-                      </>
-                    ):(
-                      <>
-                        {el.type === 'object' && (
-                          <>
-                          <Paper style={{marginTop:7,padding:20,display: 'flex', flexDirection: 'column',}}>
-                          <Typography variant="h5" gutterBottom>{el.label}</Typography>
-                            {el.properties.map(el1 => {
-                              return(
-                                <>
-                                <TextInput
-                                    key={el1.name + index}
-                                    label={el1.label!}
-                                    value={value}
-                                    handleChange={handleChange}
-                                    type={el1.type}
-                                    name={el1.name}
-                                    properties={GenerateProperties(el1)}
-                                    required={false}
-                                  />
-                                </>
-                              )
-                            })}
-                          </Paper>
-                          </>
-                        )}
-                      </>
-                    )}
-                  </>
-                )}
-                </>
-              )}
-            </>
+                        })} */}
+        <Button style={{width: 100,marginTop: 10}}  variant="outlined">Add</Button>
+        </Paper>
+        </Paper>
+      )
+    }
+  }
+
+  const RenderTextFields = () => {
+    return (
+      <>
+        {readyData.properties.map((el:any,index:number) => {
+          return (
+            RenderContent(el,index)
           )
         })}
       </>
@@ -162,9 +163,9 @@ export const FormBuilder = ({ schema, onSubmit }: Props) => {
           <Typography variant="h5" gutterBottom>
             {schema.label}
           </Typography>
-          <RenderTextFields />
+          {RenderTextFields()}
           {/* Code here */}
-          <button onClick={() => onSubmit(elements)}></button>
+          <button onClick={() => onSubmit(readyData)}></button>
         </Box>
       </Paper>
     </>

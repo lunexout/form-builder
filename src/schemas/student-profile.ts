@@ -1,173 +1,153 @@
 import { ObjectSchema } from 'lib/form-builder'
 
 export const studentProfileSchema: ObjectSchema = {
-  "type": "object",
-  "name": "test",
-  "label": "Test",
-  "properties": [
+  type: 'object',
+  name: 'profile',
+  label: 'Student profile',
+  properties: [
     {
-      "type": "string",
-      "name": "string_optional",
-      "label": "String optional"
+      type: 'string',
+      name: 'fullName',
+      label: 'Full name',
+      required: true,
     },
     {
-      "type": "string",
-      "name": "string_required",
-      "label": "String required",
-      "required": true
+      type: 'string',
+      name: 'email',
+      label: 'Email',
+      inputType: 'email',
+      required: true,
     },
     {
-      "type": "string",
-      "name": "string_validated",
-      "label": "String validated",
-      "inputType": "tel",
-      "minLength": 8,
-      "maxLength": 20,
-      "pattern": "^\\d{8,20}$"
-    },
-    {
-      "type": "string",
-      "name": "string_multiline",
-      "label": "String multiline",
-      "multiline": true
-    },
-    {
-      "type": "number",
-      "name": "number_optional",
-      "label": "Number optional"
-    },
-    {
-      "type": "number",
-      "name": "number_required",
-      "label": "Number required",
-      "required": true
-    },
-    {
-      "type": "number",
-      "name": "number_validated",
-      "label": "Number validated",
-      "integer": true,
-      "minimum": 1,
-      "maximum": 6
-    },
-    {
-      "type": "enum",
-      "name": "enum_optional",
-      "label": "Enum optional",
-      "options": [
+      type: 'enum',
+      name: 'country',
+      label: 'Country',
+      options: [
         {
-          "value": "value1",
-          "label": "Value 1"
+          value: 'ge',
+          label: 'Georgia',
         },
         {
-          "value": "value2",
-          "label": "Value 2"
-        }
-      ]
-    },
-    {
-      "type": "enum",
-      "name": "enum_required",
-      "label": "Enum required",
-      "required": true,
-      "options": [
-        {
-          "value": "value1",
-          "label": "Value 1"
+          value: 'ua',
+          label: 'Ukraine',
         },
-        {
-          "value": "value2",
-          "label": "Value 2"
-        }
-      ]
+      ],
     },
     {
-      "type": "boolean",
-      "name": "boolean",
-      "label": "Boolean"
+      type: 'string',
+      name: 'phone',
+      label: 'Phone',
+      inputType: 'tel',
+      required: true,
+      minLength: 8,
+      maxLength: 20,
+      pattern: '^\\d{8,20}$',
     },
     {
-      "type": "object",
-      "name": "object",
-      "label": "Object",
-      "properties": [
-        {
-          "type": "string",
-          "name": "string",
-          "label": "String"
-        },
-        {
-          "type": "object",
-          "name": "object_nested",
-          "label": "Object nested",
-          "properties": [
-            {
-              "type": "string",
-              "name": "string_nested",
-              "label": "String nested"
-            },
-            {
-              "type": "object",
-              "name": "object_nested_2",
-              "label": "Object nested 2",
-              "properties": [
-                {
-                  "type": "string",
-                  "name": "string_nested_2",
-                  "label": "String nested 2"
-                }
-              ]
-            }
-          ]
-        }
-      ]
+      type: 'number',
+      name: 'universityYears',
+      label: 'Finished university years',
+      integer: true,
+      minimum: 1,
+      maximum: 6,
     },
     {
-      "type": "array",
-      "name": "array_simple",
-      "label": "Array simple",
-      "item": {
-        "type": "object",
-        "name": "object",
-        "label": "Object",
-        "properties": [
+      type: 'array',
+      name: 'technologies',
+      label: 'Primary technologies',
+      required: true,
+      item: {
+        type: 'object',
+        name: 'technology',
+        properties: [
           {
-            "type": "string",
-            "name": "string",
-            "label": "String"
-          }
-        ]
-      }
+            type: 'string',
+            label: 'Technology',
+            name: 'technology',
+            required: true,
+          },
+          {
+            type: 'number',
+            label: 'Experience (years)',
+            name: 'experience',
+            integer: true,
+            required: true,
+          },
+        ],
+      },
     },
     {
-      "type": "array",
-      "name": "array_complex",
-      "label": "Array complex",
-      "required": true,
-      "item": {
-        "type": "object",
-        "name": "object",
-        "label": "Object",
-        "properties": [
+      name: 'currentPosition',
+      type: 'string',
+      label: 'Current job position',
+      required: false,
+    },
+    {
+      type: 'string',
+      name: 'plans',
+      label: 'Plans for the next year',
+      required: true,
+      multiline: true,
+    },
+    {
+      type: 'object',
+      name: 'links',
+      label: 'Links',
+      properties: [
+        {
+          type: 'string',
+          name: 'github',
+          label: 'GitHub profile',
+          required: true,
+        },
+        {
+          type: 'string',
+          name: 'linkedin',
+          label: 'LinkedIn profile',
+          required: false,
+        },
+        {
+          type: 'string',
+          name: 'website',
+          label: 'Public website',
+          required: false,
+        },
+        {
+          type: 'string',
+          name: 'cv',
+          label: 'Link to CV',
+          required: false,
+        },
+      ],
+    },
+    {
+      type: 'array',
+      name: 'projects',
+      label: 'Links to your projects',
+      required: true,
+      item: {
+        type: 'object',
+        name: 'project',
+        properties: [
           {
-            "type": "array",
-            "name": "array_simple",
-            "label": "Array simple",
-            "item": {
-              "type": "object",
-              "name": "object",
-              "label": "Object",
-              "properties": [
-                {
-                  "type": "string",
-                  "name": "string",
-                  "label": "String"
-                }
-              ]
-            }
-          }
-        ]
-      }
-    }
-  ]
+            type: 'string',
+            name: 'name',
+            label: 'Name',
+            required: true,
+          },
+          {
+            type: 'string',
+            name: 'link',
+            label: 'Link',
+            required: true,
+          },
+        ],
+      },
+    },
+    {
+      type: 'boolean',
+      name: 'haveComputer',
+      label: 'Have a computer and internet',
+    },
+  ],
 }
