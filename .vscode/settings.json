@@ -48,7 +48,7 @@
     "git-rebase-todo": "default"
   },
   "diffEditor.ignoreTrimWhitespace": false,
-  "window.zoomLevel": -3,
+  "window.zoomLevel": -1,
   "editor.inlineSuggest.enabled": true,
 
   "editor.formatOnSave": false,

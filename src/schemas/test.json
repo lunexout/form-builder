@@ -113,6 +113,18 @@
                   "type": "string",
                   "name": "string_nested_2",
                   "label": "String nested 2"
+                },
+                {
+                  "type": "object",
+                  "name": "object_nested_3",
+                  "label": "Object nested 3",
+                  "properties": [
+                    {
+                      "type": "string",
+                      "name": "string_nested_3",
+                      "label": "String nested 3"
+                    }
+                  ]
                 }
               ]
             }

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Layout } from 'Layout'
 // import { studentProfileSchema } from 'schemas/student-profile'/
 import { ResultDialog } from 'ResultDialog'
-import { ObjectSchema } from './lib/form-builder/types'
+// import { ObjectSchema } from './lib/form-builder/types'
 
 export const App = () => {
   const [submittedData, setSubmittedData] = useState<any>(null)
@@ -19,13 +19,13 @@ export const App = () => {
 
         // Replace hardcoded `studentProfileSchema` with the parsed `jsonInput`.
         try {
-          let jj : ObjectSchema = JSON.parse(jsonInput);
+          // let jj: ObjectSchema = JSON.parse(jsonInput)
           return (
             <>
               <FormBuilder
                 jsonData={jsonInput}
                 // schema={studentProfileSchema}
-                onSubmit={values => {
+                onSubmit={(values: any) => {
                   setSubmittedData(values)
                   // Send data to Firestore here.
                 }}
@@ -40,8 +40,6 @@ export const App = () => {
         } catch (error) {
           alert(error)
         }
-
-
       }}
     />
   )
