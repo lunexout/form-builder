@@ -54,7 +54,7 @@
       "name": "technologies",
       "label": "Primary technologies",
       "required": true,
-      "item": {
+      "item": [{
         "type": "object",
         "name": "technology",
         "properties": [
@@ -72,7 +72,7 @@
             "required": true
           }
         ]
-      }
+      }]
     },
     {
       "name": "currentPosition",

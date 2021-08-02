@@ -17,40 +17,23 @@ interface Props {
   options: Array<any>;
   handleChange(event: any): void;
 }
-export const SelectInput = ({
-  label,
-  value,
-  name,
-  options,
-  handleChange,
-}: Props) => {
+export const SelectInput = ({ label, value, name,  options, handleChange }: Props) => {
   const classes = useStyles();
+
   const RenderMenuItems = () => {
     return (
-      <>
-        {options.map((item,i) => {
-          return (
-            <>
-              <option key={item.value+i} value={item.value}>{item.label}</option>
-            </>
-          );
-        })}
-      </>
-    );
+        options.map((item) => { return ( <option key={item.value} value={item.value}>{item.label}</option> )})
+    )
   };
   return (
     <>
       <select
         className={classes.select}
         value={value}
-        onChange={(e) => {
-          value = e.target.value
-          const event = { val: value, name: name }
-          handleChange(event)
-        }}
+        onChange={(e) => { value=e.target.value,handleChange({ val: value, name: name }) }}
       >
-        <option>{label}</option>
-        <RenderMenuItems />
+        <option defaultValue={``}>{label}</option>
+        {RenderMenuItems()}
       </select>
     </>
   );

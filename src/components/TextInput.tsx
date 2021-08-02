@@ -14,7 +14,7 @@ export const TextInput = ({ props,value,properties,required, handleChange }: Pro
         {properties.multiline ? (
           <textarea name={props.name} value={value} required={required}
           cols={40} rows={5} placeholder={props.label}
-          onChange={e => handleChange({ val: e.target.value, name: props.name,label:props.label })}
+          onChange={e => {value=e.target.value,handleChange({ val: e.target.value, name: props.name,label:props.label })} }
           style={{borderRadius: 5, border: '1px solid lightgray',padding: 15}}
           ></textarea>
         ) : (
@@ -25,7 +25,7 @@ export const TextInput = ({ props,value,properties,required, handleChange }: Pro
             max: properties.max && properties.max,
             min: properties.min && properties.min,
           }}
-          onChange={e => handleChange({ val: e.target.value, name: props.name,label:props.label })}
+          onChange={e => {value=e.target.value,handleChange({ val: e.target.value, name: props.name,label:props.label })} }
           required={required}
         />
         )}

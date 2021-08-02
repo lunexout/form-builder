@@ -1,8 +1,9 @@
 import { FormBuilder } from 'lib/form-builder'
 import { useState } from 'react'
 import { Layout } from 'Layout'
-import { studentProfileSchema } from 'schemas/student-profile'
+// import { studentProfileSchema } from 'schemas/student-profile'/
 import { ResultDialog } from 'ResultDialog'
+import { ObjectSchema } from './lib/form-builder/types'
 
 export const App = () => {
   const [submittedData, setSubmittedData] = useState<any>(null)
@@ -17,23 +18,30 @@ export const App = () => {
         //    This step is called "Runtime data validation".
 
         // Replace hardcoded `studentProfileSchema` with the parsed `jsonInput`.
-        return (
-          <>
-            <FormBuilder
-              jsonData={jsonInput}
-              schema={studentProfileSchema}
-              onSubmit={values => {
-                setSubmittedData(values)
-                // Send data to Firestore here.
-              }}
-            />
+        try {
+          let jj : ObjectSchema = JSON.parse(jsonInput);
+          return (
+            <>
+              <FormBuilder
+                jsonData={jsonInput}
+                // schema={studentProfileSchema}
+                onSubmit={values => {
+                  setSubmittedData(values)
+                  // Send data to Firestore here.
+                }}
+              />
 
-            <ResultDialog
-              data={submittedData}
-              onClose={() => setSubmittedData(null)}
-            />
-          </>
-        )
+              <ResultDialog
+                data={submittedData}
+                onClose={() => setSubmittedData(null)}
+              />
+            </>
+          )
+        } catch (error) {
+          alert(error)
+        }
+
+
       }}
     />
   )
