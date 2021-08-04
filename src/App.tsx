@@ -23,7 +23,7 @@ export const App = () => {
           return (
             <>
               <FormBuilder
-                jsonData={jsonInput}
+                jsonData={JSON.parse(jsonInput)}
                 // schema={studentProfileSchema}
                 onSubmit={(values: any) => {
                   setSubmittedData(values)

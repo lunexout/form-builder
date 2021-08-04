@@ -1,4 +1,5 @@
 import TextField from '@material-ui/core/TextField'
+import { useState } from 'react'
 
 interface Props {
   props: any
@@ -17,6 +18,7 @@ export const TextInput = ({
   index,
   handleChange,
 }: Props) => {
+  const [val, setValue] = useState('')
   return (
     <>
       {properties.multiline ? (
@@ -31,6 +33,7 @@ export const TextInput = ({
             value = e.target.value
             handleChange({
               val: e.target.value,
+              el: props,
               name: props.name,
               label: props.label,
               index: index,
@@ -47,7 +50,7 @@ export const TextInput = ({
           id="outlined-basic"
           variant="outlined"
           label={props.label}
-          value={value}
+          // value={value}
           inputProps={{
             type: properties.type
               ? properties.type
@@ -58,10 +61,12 @@ export const TextInput = ({
             max: properties.max && properties.max,
             min: properties.min && properties.min,
           }}
+          value={val}
           onChange={e => {
-            value = e.target.value
+            setValue(e.target.value)
             handleChange({
               val: e.target.value,
+              el: props,
               name: props.name,
               label: props.label,
               index: index,
