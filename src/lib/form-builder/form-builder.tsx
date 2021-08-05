@@ -32,7 +32,6 @@ const GenerateProperties = (el: any): object => {
   }
 }
 export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
-  const [elements, setElements] = useState<Array<any>>([])
   const [watchForm, setWatchForm] = useState(false)
 
   // let jsonData
@@ -40,16 +39,18 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
   let value: any
 
   const AddElement = (el: any) => {
-    const deepClone = JSON.parse(JSON.stringify(el.item[0]))
+    let deepClone = JSON.parse(JSON.stringify(el.item[0]))
+    deepClone.properties.map((item: any) => (item.value = ''))
     el.item = [...el.item, deepClone]
     setWatchForm(!watchForm)
   }
   const DeleteElement = (el: any, index: any) => {
     console.log(el)
-    if (index.toString().split(';').length === 2) {
-      console.log(el.item)
-      el.item.splice(parseInt(index.toString().split(';')[1]), 1)
-    }
+    let oneDrillingUpElement = JSON.parse(JSON.stringify(el.item))
+    const deletedElements = oneDrillingUpElement.filter(
+      (unsuned: any, i: any) => i !== index,
+    )
+    el.item = [...deletedElements]
     setWatchForm(!watchForm)
   }
   useEffect(() => {
@@ -59,17 +60,13 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
   const ARRAY = 'array'
   const OBJECT = 'object'
 
-  const SetNestedElementValue = (
-    nestedElement: any,
-    value: any,
-    i: any,
-  ) => {
+  const SetNestedElementValue = (nestedElement: any, value: any, i: any) => {
     if (nestedElement.type === ARRAY) {
       nestedElement.item.forEach((element: any, index: number) => {
         if (i.length > 0) {
           if (index === i[0]) {
             if (element.type === OBJECT) {
-              SetNestedElementValue(element,  value, index)
+              SetNestedElementValue(element, value, index)
             } else {
               element.value = value
             }
@@ -78,11 +75,10 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
       })
     } else {
       nestedElement.properties.forEach((element: any, index: number) => {
-        console.log(element.type)
         if (i.length > 0) {
           if (index === i[0]) {
             if (element.type === OBJECT || element.type === ARRAY) {
-              SetNestedElementValue(element,  value, index)
+              SetNestedElementValue(element, value, index)
             } else {
               element.value = value
             }
@@ -93,21 +89,21 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
     // }
   }
   const SetValue = (event: any): void => {
-    console.log(event)
     value = event.val
-    if (!event.index.toString().includes(";")) {
+    if (!event.index.toString().includes(';')) {
       jsonData.properties[event.index].value = event.val
     } else if (event.index.split(';').length === 2) {
-      jsonData.properties[event.index.split(';')[0]].properties[ event.index.split(';')[1] ].value = event.val
+      jsonData.properties[event.index.split(';')[0]].properties[
+        event.index.split(';')[1]
+      ].value = event.val
     } else {
       event.el.value = event.val
       jsonData.properties.forEach((el: any, i: any) => {
-
         if (event.index.split(';')[0] === i.toString()) {
           let arr = event.index.split(';')
           arr.splice(0, 1)
 
-          SetNestedElementValue(el,  event.val, arr)
+          SetNestedElementValue(el, event.val, arr)
         }
       })
     }
@@ -126,7 +122,10 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
               flexDirection: 'column',
             }}
           >
-            <Typography variant="h5" gutterBottom> {ele.label} </Typography>
+            <Typography variant="h5" gutterBottom>
+              {' '}
+              {ele.label}{' '}
+            </Typography>
             {ele.properties.map((el1: any, i: number) => {
               let ind = index.toString() + ';' + i.toString()
               return (
@@ -197,7 +196,7 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
             color="primary"
             style={{ marginTop: 15 }}
             type="submit"
-            onClick={() => onSubmit(elements)}
+            onClick={() => onSubmit(jsonData)}
           >
             Submit
           </Button>

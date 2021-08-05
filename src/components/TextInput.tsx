@@ -1,3 +1,4 @@
+// eslint-disable-next-line prettier/prettier
 import TextField from '@material-ui/core/TextField'
 import { useState } from 'react'
 
@@ -18,19 +19,21 @@ export const TextInput = ({
   index,
   handleChange,
 }: Props) => {
-  const [val, setValue] = useState('')
+  const [inputValue, setInputValue] = useState('')
+  const [textArea, setTextArea] = useState('')
   return (
     <>
       {properties.multiline ? (
         <textarea
           name={props.name}
-          value={value}
+          value={props.value ? props.value : textArea}
           required={required}
           cols={40}
           rows={5}
           placeholder={props.label}
           onChange={e => {
-            value = e.target.value
+            // value = e.target.value
+            setTextArea(e.target.value)
             handleChange({
               val: e.target.value,
               el: props,
@@ -60,9 +63,9 @@ export const TextInput = ({
             max: properties.max && properties.max,
             min: properties.min && properties.min,
           }}
-          value={value}
+          value={props.value ? props.value : inputValue}
           onChange={e => {
-            value = e.target.value,
+            setInputValue(e.target.value)
             handleChange({
               val: e.target.value,
               el: props,

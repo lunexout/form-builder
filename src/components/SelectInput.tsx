@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles'
+import { useState } from 'react'
 
 const useStyles = makeStyles(() => ({
   select: {
@@ -15,6 +16,7 @@ interface Props {
   value: any
   name: string
   index: any
+  el: any
   options: Array<any>
   handleChange(event: any): void
 }
@@ -22,11 +24,12 @@ export const SelectInput = ({
   label,
   value,
   index,
-  name,
+  el,
   options,
   handleChange,
 }: Props) => {
   const classes = useStyles()
+  const [selectValue, setSelectValue] = useState('')
 
   const RenderMenuItems = () => {
     return options.map(item => {
@@ -41,10 +44,11 @@ export const SelectInput = ({
     <>
       <select
         className={classes.select}
-        value={value}
+        value={el.value ? el.value : selectValue}
         onChange={e => {
           value = e.target.value
-          handleChange({ val: value, name: name, index: index })
+          setSelectValue(e.target.value)
+          handleChange({ val: value, index: index })
         }}
       >
         <option defaultValue={``}>{label}</option>

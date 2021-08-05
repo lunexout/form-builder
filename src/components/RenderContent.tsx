@@ -1,3 +1,4 @@
+// eslint-disable-next-line prettier/prettier
 import {Button, Paper, Typography } from '@material-ui/core'
 // import { ObjectSchema } from './types'
 
@@ -6,8 +7,7 @@ import { SelectInput } from './../components/SelectInput'
 
 import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-import { useState } from 'react'
-
+import './../css/style.css'
 // import { ShowAlert } from './../../components/Alert'
 const STRING = 'string'
 const NUMBER = 'number'
@@ -36,7 +36,6 @@ export const RenderContent = ({
   el,
   index,
 }: Props) => {
-
   const RenderAsJsx = () => {
     if (el.type === STRING || el.type === NUMBER) {
       return (
@@ -54,6 +53,7 @@ export const RenderContent = ({
       return (
         <SelectInput
           key={index}
+          el={el}
           index={index}
           label={el.label!}
           value={value}
@@ -65,15 +65,7 @@ export const RenderContent = ({
       )
     } else if (el.type === OBJECT) {
       return (
-        <Paper
-          style={{
-            marginTop: 7,
-            padding: 20,
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%',
-          }}
-        >
+        <Paper className="paper-style">
           <Typography variant="h5" gutterBottom>
             {el.label}
           </Typography>
@@ -83,14 +75,14 @@ export const RenderContent = ({
               RenderNestedObjects(ele, indexPath)
             ) : (
               <RenderContent
-              RenderNestedObjects={RenderNestedObjects}
-              GenerateProperties={GenerateProperties}
-              AddElement={AddElement}
-              DeleteElement={DeleteElement}
-              value={value}
-              SetValue={SetValue}
-              el={ele}
-              index={indexPath}
+                RenderNestedObjects={RenderNestedObjects}
+                GenerateProperties={GenerateProperties}
+                AddElement={AddElement}
+                DeleteElement={DeleteElement}
+                value={value}
+                SetValue={SetValue}
+                el={ele}
+                index={indexPath}
               />
             )
           })}
@@ -102,25 +94,12 @@ export const RenderContent = ({
           <Typography variant="h5" gutterBottom>
             {el.label}
           </Typography>
-          <Paper
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              padding: 20,
-              width: '100%',
-            }}
-          >
+          <Paper className="paper-style">
             {el.item.map((ele: any, i: string) => {
               let indexPath = index.toString() + ';' + i.toString()
               return (
                 <>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}
-                  >
+                  <div className="paper-div">
                     {ele.type === OBJECT ? (
                       RenderNestedObjects(ele, indexPath)
                     ) : (
@@ -134,32 +113,15 @@ export const RenderContent = ({
                         el={ele}
                         index={indexPath}
                       />
-                      // <TextInput
-                      //   props={ele}
-                      //   index={indexPath}
-                      //   key={ele.name}
-                      //   value={ele.value ? ele.value : value}
-                      //   handleChange={SetValue}
-                      //   properties={GenerateProperties(ele)}
-                      //   required={ele.required ? true : false}
-                      // />
                     )}
-                    {el.item.length > 1 ? (
-                      <Button
+                    <Button
                       style={{ width: 100, marginTop: 10 }}
-                      onClick={() => DeleteElement(el, indexPath)}
+                      onClick={() => DeleteElement(el, i)}
                       variant="outlined"
+                      disabled={el.item.length > 1 ? false : true}
                     >
                       Remove
                     </Button>
-                    ):(
-                      <Button
-                      style={{ width: 100, marginTop: 10 }}
-                      variant="outlined"
-                    >
-                      Remove
-                    </Button>
-                    )}
                   </div>
                 </>
               )
@@ -181,7 +143,10 @@ export const RenderContent = ({
           control={
             <Checkbox
               checked={value}
-              onChange={e => {value=e.target.checked, SetValue({ val: e.target.checked, index })}  }
+              onChange={e => {
+                value = e.target.checked
+                SetValue({ val: e.target.checked, index })
+              }}
               name={el.name}
               color="primary"
             />

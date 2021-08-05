@@ -1,0 +1,12 @@
+.paper-style {
+  margin-top: 7px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.paper-div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
