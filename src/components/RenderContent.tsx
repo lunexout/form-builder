@@ -1,13 +1,12 @@
-import { Box, Button, Paper, Typography } from '@material-ui/core'
+import {Button, Paper, Typography } from '@material-ui/core'
 // import { ObjectSchema } from './types'
 
 import { TextInput } from './../components/TextInput'
 import { SelectInput } from './../components/SelectInput'
-// import { useState } from 'react'
 
 import Checkbox from '@material-ui/core/Checkbox'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 // import { ShowAlert } from './../../components/Alert'
 const STRING = 'string'
@@ -37,16 +36,13 @@ export const RenderContent = ({
   el,
   index,
 }: Props) => {
-  const [elements, setElements] = useState<Array<any>>([])
-  const [watchForm, setWatchForm] = useState(false)
 
-  // const RenderContent = (el: any, index: any) => {
-  const func = () => {
+  const RenderAsJsx = () => {
     if (el.type === STRING || el.type === NUMBER) {
       return (
         <TextInput
           props={el}
-          key={el.name + index}
+          key={index}
           index={index}
           value={value}
           handleChange={SetValue}
@@ -57,7 +53,7 @@ export const RenderContent = ({
     } else if (el.type === ENUM) {
       return (
         <SelectInput
-          key={el.name}
+          key={index}
           index={index}
           label={el.label!}
           value={value}
@@ -82,18 +78,19 @@ export const RenderContent = ({
             {el.label}
           </Typography>
           {el.properties.map((ele: any, i: number) => {
-            let ind = index.toString() + ';' + i.toString()
+            let indexPath = index.toString() + ';' + i.toString()
             return ele.type === OBJECT ? (
-              RenderNestedObjects(ele, ind)
+              RenderNestedObjects(ele, indexPath)
             ) : (
-              <TextInput
-                props={ele}
-                key={ele.name}
-                index={ind}
-                value={value}
-                handleChange={SetValue}
-                properties={GenerateProperties(ele)}
-                required={ele.required ? true : false}
+              <RenderContent
+              RenderNestedObjects={RenderNestedObjects}
+              GenerateProperties={GenerateProperties}
+              AddElement={AddElement}
+              DeleteElement={DeleteElement}
+              value={value}
+              SetValue={SetValue}
+              el={ele}
+              index={indexPath}
               />
             )
           })}
@@ -113,8 +110,8 @@ export const RenderContent = ({
               width: '100%',
             }}
           >
-            {el.item.map((ele: any, i: number) => {
-              let ind = index.toString() + ';' + i.toString()
+            {el.item.map((ele: any, i: string) => {
+              let indexPath = index.toString() + ';' + i.toString()
               return (
                 <>
                   <div
@@ -125,32 +122,51 @@ export const RenderContent = ({
                     }}
                   >
                     {ele.type === OBJECT ? (
-                      RenderNestedObjects(ele, ind)
+                      RenderNestedObjects(ele, indexPath)
                     ) : (
-                      <TextInput
-                        props={ele}
-                        index={ind}
-                        key={ele.name}
+                      <RenderContent
+                        RenderNestedObjects={RenderNestedObjects}
+                        GenerateProperties={GenerateProperties}
+                        AddElement={AddElement}
+                        DeleteElement={DeleteElement}
                         value={value}
-                        handleChange={SetValue}
-                        properties={GenerateProperties(ele)}
-                        required={ele.required ? true : false}
+                        SetValue={SetValue}
+                        el={ele}
+                        index={indexPath}
                       />
+                      // <TextInput
+                      //   props={ele}
+                      //   index={indexPath}
+                      //   key={ele.name}
+                      //   value={ele.value ? ele.value : value}
+                      //   handleChange={SetValue}
+                      //   properties={GenerateProperties(ele)}
+                      //   required={ele.required ? true : false}
+                      // />
                     )}
-                    <Button
+                    {el.item.length > 1 ? (
+                      <Button
                       style={{ width: 100, marginTop: 10 }}
-                      onClick={() => DeleteElement(el, ind)}
+                      onClick={() => DeleteElement(el, indexPath)}
                       variant="outlined"
                     >
-                      remove
+                      Remove
                     </Button>
+                    ):(
+                      <Button
+                      style={{ width: 100, marginTop: 10 }}
+                      variant="outlined"
+                    >
+                      Remove
+                    </Button>
+                    )}
                   </div>
                 </>
               )
             })}
             <Button
               style={{ width: 100, marginTop: 10 }}
-              onClick={() => AddElement(el, index)}
+              onClick={() => AddElement(el)}
               variant="outlined"
             >
               Add
@@ -159,16 +175,13 @@ export const RenderContent = ({
         </Paper>
       )
     } else if (el.type === BOOLEAN) {
+      console.log(el, 'sfsd')
       return (
         <FormControlLabel
           control={
             <Checkbox
               checked={value}
-              onChange={e => {
-                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-                value = e.target.checked
-                SetValue({ val: value, name: el.name })
-              }}
+              onChange={e => {value=e.target.checked, SetValue({ val: e.target.checked, index })}  }
               name={el.name}
               color="primary"
             />
@@ -178,5 +191,5 @@ export const RenderContent = ({
       )
     }
   }
-  return <>{func()}</>
+  return <>{RenderAsJsx()}</>
 }

@@ -39,63 +39,52 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
   // = JSON.parse(jsonData) //
   let value: any
 
-  const AddElement = (el: any, index: any) => {
+  const AddElement = (el: any) => {
     const deepClone = JSON.parse(JSON.stringify(el.item[0]))
     el.item = [...el.item, deepClone]
     setWatchForm(!watchForm)
   }
   const DeleteElement = (el: any, index: any) => {
-    console.log(index)
+    console.log(el)
     if (index.toString().split(';').length === 2) {
       console.log(el.item)
       el.item.splice(parseInt(index.toString().split(';')[1]), 1)
     }
-    // else if{
-
-    // }
     setWatchForm(!watchForm)
   }
   useEffect(() => {
-    console.log(1)
     renderFields()
   }, [watchForm])
 
-  const STRING = 'string'
-  const NUMBER = 'number'
-  const ENUM = 'enum'
   const ARRAY = 'array'
   const OBJECT = 'object'
-  const BOOLEAN = 'boolean'
 
   const SetNestedElementValue = (
-    el: any,
-    label: string,
-    value: string,
+    nestedElement: any,
+    value: any,
     i: any,
   ) => {
-    // let arr = i
-    // arr.splice(0, 1)
-    if (el.type === ARRAY) {
-      el.item.forEach((el: any, index: number) => {
+    if (nestedElement.type === ARRAY) {
+      nestedElement.item.forEach((element: any, index: number) => {
         if (i.length > 0) {
           if (index === i[0]) {
-            if (el.type === OBJECT) {
-              SetNestedElementValue(el, label, value, index)
+            if (element.type === OBJECT) {
+              SetNestedElementValue(element,  value, index)
             } else {
-              el.value = value
+              element.value = value
             }
           }
         }
       })
     } else {
-      el.properties.forEach((ele: any, index: number) => {
-        console.log(ele.type)
+      nestedElement.properties.forEach((element: any, index: number) => {
+        console.log(element.type)
         if (i.length > 0) {
           if (index === i[0]) {
-            if (ele.type === OBJECT || ele.type === ARRAY) {
-              SetNestedElementValue(ele, label, value, index)
+            if (element.type === OBJECT || element.type === ARRAY) {
+              SetNestedElementValue(element,  value, index)
             } else {
-              ele.value = value
+              element.value = value
             }
           }
         }
@@ -105,20 +94,20 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
   }
   const SetValue = (event: any): void => {
     console.log(event)
-    if (event.index.toString().length === 1) {
+    value = event.val
+    if (!event.index.toString().includes(";")) {
       jsonData.properties[event.index].value = event.val
     } else if (event.index.split(';').length === 2) {
-      jsonData.properties[event.index.split(';')[0]].properties[
-        event.index.split(';')[1]
-      ].value = event.val
+      jsonData.properties[event.index.split(';')[0]].properties[ event.index.split(';')[1] ].value = event.val
     } else {
       event.el.value = event.val
       jsonData.properties.forEach((el: any, i: any) => {
+
         if (event.index.split(';')[0] === i.toString()) {
           let arr = event.index.split(';')
           arr.splice(0, 1)
 
-          SetNestedElementValue(el, event.label, event.val, arr)
+          SetNestedElementValue(el,  event.val, arr)
         }
       })
     }
@@ -137,9 +126,7 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
               flexDirection: 'column',
             }}
           >
-            <Typography variant="h5" gutterBottom>
-              {ele.label}
-            </Typography>
+            <Typography variant="h5" gutterBottom> {ele.label} </Typography>
             {ele.properties.map((el1: any, i: number) => {
               let ind = index.toString() + ';' + i.toString()
               return (
@@ -178,7 +165,7 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
               el={el}
               index={index}
               RenderNestedObjects={RenderNestedObjects}
-              value={value}
+              value={el.value ? el.value : value}
               SetValue={SetValue}
               AddElement={AddElement}
               GenerateProperties={GenerateProperties}

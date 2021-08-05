@@ -47,7 +47,6 @@ export const TextInput = ({
         ></textarea>
       ) : (
         <TextField
-          id="outlined-basic"
           variant="outlined"
           label={props.label}
           // value={value}
@@ -61,9 +60,9 @@ export const TextInput = ({
             max: properties.max && properties.max,
             min: properties.min && properties.min,
           }}
-          value={val}
+          value={value}
           onChange={e => {
-            setValue(e.target.value)
+            value = e.target.value,
             handleChange({
               val: e.target.value,
               el: props,
