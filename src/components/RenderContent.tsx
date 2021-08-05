@@ -137,7 +137,6 @@ export const RenderContent = ({
         </Paper>
       )
     } else if (el.type === BOOLEAN) {
-      console.log(el, 'sfsd')
       return (
         <FormControlLabel
           control={

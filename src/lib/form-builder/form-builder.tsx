@@ -242,8 +242,7 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
             color="primary"
             style={{ marginTop: 15 }}
             type="submit"
-            // onClick={() => generateJSON()}
-            onClick={() => {
+            onSubmit={() => {
               generateJSON()
               onSubmit(newJSON)
             }}
