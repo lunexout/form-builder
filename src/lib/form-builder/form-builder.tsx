@@ -44,7 +44,8 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
       if (
         item.type === 'string' ||
         item.type === 'number' ||
-        item.type === 'enum'
+        item.type === 'enum' ||
+        item.type === 'boolean'
       ) {
         previousItem[item['name']] = item.value
       } else if (item.type === 'object') {
@@ -63,7 +64,8 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
       if (
         item.type === 'string' ||
         item.type === 'number' ||
-        item.type === 'enum'
+        item.type === 'enum' ||
+        item.type === 'boolean'
       ) {
         newJSON[item['name']] = item.value
       }
@@ -230,7 +232,9 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
           flexDirection="column"
           component="form"
           onSubmit={event => {
-            // Code here
+            event.preventDefault()
+            generateJSON()
+            onSubmit(newJSON)
           }}
         >
           <Typography variant="h5" gutterBottom>
@@ -242,7 +246,7 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
             color="primary"
             style={{ marginTop: 15 }}
             type="submit"
-            onSubmit={() => {
+            onSubmit={e => {
               generateJSON()
               onSubmit(newJSON)
             }}
