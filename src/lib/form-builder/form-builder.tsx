@@ -32,6 +32,54 @@ const GenerateProperties = (el: any): object => {
   }
 }
 export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
+  let newJSON: any = {
+    name: jsonData.label,
+  }
+  const generateJSON = () => {
+    const findNestedElementValues = (
+      item: any,
+      previousItem: any,
+      index: any,
+    ) => {
+      if (
+        item.type === 'string' ||
+        item.type === 'number' ||
+        item.type === 'enum'
+      ) {
+        previousItem[item['name']] = item.value
+      } else if (item.type === 'object') {
+        previousItem[index.toString()] = {}
+        item.properties.map((el: any, i: number) => {
+          findNestedElementValues(el, previousItem[index.toString()], i)
+        })
+      } else if (item.type === 'array') {
+        previousItem[item['name']] = []
+        item.item.map((el: any, i: number) => {
+          findNestedElementValues(el, previousItem[item['name']], i)
+        })
+      }
+    }
+    jsonData.properties.map((item: any, index: number) => {
+      if (
+        item.type === 'string' ||
+        item.type === 'number' ||
+        item.type === 'enum'
+      ) {
+        newJSON[item['name']] = item.value
+      }
+      if (item.type === 'object') {
+        newJSON[item['name']] = {}
+        findNestedElementValues(item, newJSON[item['name']], index)
+      }
+      if (item.type === 'array') {
+        newJSON[item['name']] = []
+        item.item.map((el: any, index: number) => {
+          findNestedElementValues(el, newJSON[item['name']], index)
+        })
+      }
+    })
+  }
+
   const [watchForm, setWatchForm] = useState(false)
 
   // let jsonData
@@ -45,7 +93,6 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
     setWatchForm(!watchForm)
   }
   const DeleteElement = (el: any, index: any) => {
-    console.log(el)
     let oneDrillingUpElement = JSON.parse(JSON.stringify(el.item))
     const deletedElements = oneDrillingUpElement.filter(
       (unsuned: any, i: any) => i !== index,
@@ -107,7 +154,6 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
         }
       })
     }
-    console.log(jsonData)
   }
 
   const RenderNestedObjects = (ele: any, index: any) => {
@@ -196,7 +242,11 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
             color="primary"
             style={{ marginTop: 15 }}
             type="submit"
-            onClick={() => onSubmit(jsonData)}
+            // onClick={() => generateJSON()}
+            onClick={() => {
+              generateJSON()
+              onSubmit(newJSON)
+            }}
           >
             Submit
           </Button>
