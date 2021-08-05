@@ -1,26 +1,16 @@
 import { Box, Button, Paper, Typography } from '@material-ui/core'
 import { ObjectSchema } from './types'
 
-import { TextInput } from './../../components/TextInput'
-import { SelectInput } from './../../components/SelectInput'
-// import { useState } from 'react'
-
-import Checkbox from '@material-ui/core/Checkbox'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
 import { useEffect, useState } from 'react'
 
 import { RenderContent } from './../../components/RenderContent'
 // import { ShowAlert } from './../../components/Alert'
-
 type Props = {
   // jsonData: string
   jsonData: any
   onSubmit: (values: any) => void
 }
-// interface DataSchema {
-//   name: string
-//   value: any
-// }
+
 
 const GenerateProperties = (el: any): object => {
   return {
@@ -47,7 +37,7 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
         item.type === 'enum' ||
         item.type === 'boolean'
       ) {
-        previousItem[item['name']] = item.value
+        previousItem[item['name']] = item.value ? item.value : null
       } else if (item.type === 'object') {
         previousItem[index.toString()] = {}
         item.properties.map((el: any, i: number) => {
@@ -67,7 +57,7 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
         item.type === 'enum' ||
         item.type === 'boolean'
       ) {
-        newJSON[item['name']] = item.value
+        newJSON[item['name']] = item.value ? item.value : null
       }
       if (item.type === 'object') {
         newJSON[item['name']] = {}
@@ -80,6 +70,7 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
         })
       }
     })
+
   }
 
   const [watchForm, setWatchForm] = useState(false)
@@ -246,10 +237,6 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
             color="primary"
             style={{ marginTop: 15 }}
             type="submit"
-            onSubmit={e => {
-              generateJSON()
-              onSubmit(newJSON)
-            }}
           >
             Submit
           </Button>

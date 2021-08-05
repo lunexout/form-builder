@@ -4,6 +4,7 @@ import { Layout } from 'Layout'
 // import { studentProfileSchema } from 'schemas/student-profile'/
 import { ResultDialog } from 'ResultDialog'
 // import { ObjectSchema } from './lib/form-builder/types'
+import firebase from './firebase/firebase'
 
 export const App = () => {
   const [submittedData, setSubmittedData] = useState<any>(null)
@@ -28,12 +29,13 @@ export const App = () => {
                 onSubmit={(values: any) => {
                   setSubmittedData(values)
                   // Send data to Firestore here.
+                  firebase.firestore().collection("forms").doc(`${values.name}`).set(values);
                 }}
               />
 
               <ResultDialog
                 data={submittedData}
-                onClose={() => setSubmittedData(null)}
+                onClose={() => window.location.reload()}
               />
             </>
           )
