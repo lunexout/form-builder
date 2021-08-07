@@ -153,6 +153,12 @@ export const RenderContent = ({
           label={el.label}
         />
       )
+    } else  {
+      return(
+        <div style={{padding:10,border: '1px solid red',borderRadius:5}}>
+          JSON schema is not correct in properties at index {index.toString().replaceAll(";", "->")}
+        </div>
+      )
     }
   }
   return <>{RenderAsJsx()}</>

@@ -231,7 +231,13 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
           <Typography variant="h5" gutterBottom>
             {jsonData.label}
           </Typography>
-          {renderFields()}
+          {jsonData.type === OBJECT ? (
+            renderFields()
+          ) : (
+            <>
+              Invalid Schema
+            </>
+          )}
           <Button
             variant="contained"
             color="primary"
