@@ -232,20 +232,23 @@ export const FormBuilder = ({ jsonData, onSubmit }: Props) => {
             {jsonData.label}
           </Typography>
           {jsonData.type === OBJECT ? (
-            renderFields()
+            <>
+            {renderFields()}
+            <Button
+            variant="contained"
+            color="primary"
+            style={{ marginTop: 15 }}
+            type="submit"
+            >
+            Submit
+            </Button>
+            </>
           ) : (
             <>
               Invalid Schema
             </>
           )}
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ marginTop: 15 }}
-            type="submit"
-          >
-            Submit
-          </Button>
+
         </Box>
       </Paper>
     </>
